@@ -1,0 +1,11 @@
+# Ignore chat and memory logs
+chatlog.json
+user_memory.json
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Environment files (optional)
+.env
+venv/

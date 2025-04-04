@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoFiBot</title>
+  <style>
+    body {
+      font-family: monospace;
+      background-color: #111;
+      color: #0f0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .chat-box {
+      border: 1px solid #0f0;
+      padding: 10px;
+      height: 300px;
+      width: 100%;
+      max-width: 600px;
+      overflow-y: scroll;
+      background-color: #000;
+    }
+    .input-area {
+      margin-top: 10px;
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      background-color: #222;
+      color: #0f0;
+      border: 1px solid #0f0;
+    }
+    button {
+      padding: 10px;
+      background-color: #0f0;
+      color: #000;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>LoFiBot</h1>
+  <div class="chat-box" id="chatBox"></div>
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Say something...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById('chatBox');
+    const userInput = document.getElementById('userInput');
+
+    function appendMessage(sender, message) {
+      const msg = document.createElement('div');
+      msg.innerText = `${sender}: ${message}`;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function sendMessage() {
+      const userText = userInput.value.trim();
+      if (!userText) return;
+      appendMessage("You", userText);
+      fetch('/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: userText })
+      })
+      .then(res => res.json())
+      .then(data => {
+        appendMessage("LoFiBot", data.response);
+      });
+      userInput.value = '';
+    }
+
+    userInput.addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
